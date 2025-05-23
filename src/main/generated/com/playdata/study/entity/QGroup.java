@@ -20,6 +20,8 @@ public class QGroup extends EntityPathBase<Group> {
 
     public static final QGroup group = new QGroup("group1");
 
+    public final ListPath<Album, QAlbum> albums = this.<Album, QAlbum>createList("albums", Album.class, QAlbum.class, PathInits.DIRECT2);
+
     public final StringPath groupName = createString("groupName");
 
     public final NumberPath<Long> id = createNumber("id", Long.class);

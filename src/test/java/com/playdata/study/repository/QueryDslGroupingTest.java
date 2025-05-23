@@ -1,8 +1,10 @@
 package com.playdata.study.repository;
 
+import com.playdata.study.dto.GroupAverageResponse;
 import com.playdata.study.entity.Group;
 import com.playdata.study.entity.Idol;
 import com.querydsl.core.Tuple;
+import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -13,6 +15,7 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.playdata.study.entity.QIdol.idol;
 import static org.junit.jupiter.api.Assertions.*;
@@ -129,6 +132,132 @@ class QueryDslGroupingTest {
     }
 
 
+    @Test
+    @DisplayName("그룹화 기본")
+    void groupByTest() {
+        // given
+
+        // when
+
+        Integer totalAge = factory.select(idol.age.sum())
+                .from(idol)
+                .fetchOne();
+        // then
+        System.out.println("totalAge = " + totalAge);
+    }
+
+
+    @Test
+    @DisplayName("그룹별 인원 수 세기")
+    void groupByCountTest() {
+        // given
+
+        // when
+
+        List<Tuple> list = factory.select(idol.group.groupName, idol.count())
+                .from(idol)
+                .groupBy(idol.group.id)
+                .fetch();
+
+        // then
+
+        for (Tuple tuple : list) {
+            String s = tuple.get(idol.group.groupName);
+            Long l = tuple.get(idol.count());
+            System.out.printf("그룹명 = %s, 인원수 = %d\n", s, l);
+        }
+    }
+
+
+    @Test
+    @DisplayName("성별별 아이돌 인원수 세기")
+    void groupByGenderTest() {
+        // given
+
+        // when
+
+        List<Tuple> list = factory.select(idol.gender, idol.count())
+                .from(idol)
+                .groupBy(idol.gender)
+                .fetch();
+
+        // then
+        for (Tuple tuple : list) {
+            String s = tuple.get(idol.gender);
+            Long l = tuple.get(idol.count());
+            System.out.printf("성별 = %s, 인원수 = %d\n", s, l);
+        }
+
+    }
+
+
+    @Test
+    @DisplayName("그룹별로 그룹명과 평균나이를 조회 (평균나이가 20 ~ 25세만 대상으로)")
+    void averageAgeTest() {
+        // given
+
+        // when
+
+        List<Tuple> list = factory.select(idol.group.groupName, idol.age.avg())
+                .from(idol)
+                .groupBy(idol.group)
+                .having(idol.age.avg().between(20, 25))
+                .fetch();
+
+        // then
+        for (Tuple tuple : list) {
+            String s = tuple.get(idol.group.groupName);
+            Double v = tuple.get(idol.age.avg());
+            System.out.printf("그룹명 = %s, 평균나이 = %.2f세\n", s, v);
+        }
+
+    }
+
+    @Test
+    @DisplayName("그룹별로 그룹명과 평균나이를 조회하여 DTO로 처리")
+    void groupAverageDtoTest() {
+        // given
+
+        // when
+
+        List<GroupAverageResponse> dtoList = factory.select(idol.group.groupName, idol.age.avg())
+                .from(idol)
+                .groupBy(idol.group)
+                .having(idol.age.avg().between(20, 25))
+                .fetch()
+                .stream()
+                .map(GroupAverageResponse::from)
+                .toList();
+
+        // then
+
+        dtoList.forEach(System.out::println);
+    }
+
+
+    @Test
+    @DisplayName("그룹별로 그룹명과 평균나이를 조회하여 DTO로 처리 ver2")
+    void groupAvgAgeDtoTestV2() {
+        // given
+
+        // when
+        List<GroupAverageResponse> dtoList = factory
+                .select(
+                        // 조회 결과를 원하는 DTO 타입으로 바로 매핑할 때 사용하는 메서드
+                        Projections.constructor(
+                                GroupAverageResponse.class,
+                                idol.group.groupName,
+                                idol.age.avg()
+                        )
+                )
+                .from(idol)
+                .groupBy(idol.group)
+                .having(idol.age.avg().between(20, 25))
+                .fetch();
+
+        // then
+        dtoList.forEach(System.out::println);
+    }
 
     @BeforeEach
     void setUp() {

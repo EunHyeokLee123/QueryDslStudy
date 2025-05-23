@@ -12,7 +12,7 @@ import java.util.List;
 @Setter
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@ToString(exclude = {"idols"})
+@ToString(exclude = {"idols", "albums"})
 @EqualsAndHashCode(of = "id")
 public class Group {
 
@@ -22,6 +22,9 @@ public class Group {
     private Long id;
 
     private String groupName;
+
+    @OneToMany(mappedBy = "group", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Album> albums = new ArrayList<>();
 
     @OneToMany(mappedBy = "group", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Idol> idols = new ArrayList<>();
