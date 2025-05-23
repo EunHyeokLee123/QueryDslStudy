@@ -22,14 +22,17 @@ public class Idol {
 
     private int age;
 
+    private String gender;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "group_id")
     private Group group;
 
 
-    public Idol(String idolName, int age, Group group) {
+    public Idol(String idolName, int age, Group group, String gender) {
         this.idolName = idolName;
         this.age = age;
+        this.gender = gender;
         if (group != null) {
             changeGroup(group);
         }

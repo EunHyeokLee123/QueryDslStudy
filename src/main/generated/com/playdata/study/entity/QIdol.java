@@ -24,6 +24,8 @@ public class QIdol extends EntityPathBase<Idol> {
 
     public final NumberPath<Integer> age = createNumber("age", Integer.class);
 
+    public final StringPath gender = createString("gender");
+
     public final QGroup group;
 
     public final NumberPath<Long> id = createNumber("id", Long.class);

@@ -86,11 +86,11 @@ class QueryDslSortTest {
         groupRepository.save(leSserafim);
         groupRepository.save(ive);
 
-        Idol idol1 = new Idol("김채원", 24, leSserafim);
-        Idol idol2 = new Idol("사쿠라", 26, leSserafim);
-        Idol idol3 = new Idol("가을", 22, ive);
-        Idol idol4 = new Idol("리즈", 20, ive);
-        Idol idol5 = new Idol("장원영", 20, ive);
+        Idol idol1 = new Idol("김채원", 24, leSserafim, "여");
+        Idol idol2 = new Idol("사쿠라", 26, leSserafim, "여");
+        Idol idol3 = new Idol("가을", 22, ive, "여");
+        Idol idol4 = new Idol("리즈", 20, ive, "여");
+        Idol idol5 = new Idol("장원영", 20, ive, "여");
 
         idolRepository.save(idol1);
         idolRepository.save(idol2);
